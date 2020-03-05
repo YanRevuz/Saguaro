@@ -25,6 +25,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -36,8 +37,14 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.saguaro.Api.LocalisationHelper;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,8 +55,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,7 +77,12 @@ public class MainActivity extends AppCompatActivity {
     private CaptureRequest mPreviewRequest;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int REQUEST_CAMERA_PERMISSION = 1;
-    FloatingActionButton boutonPicture ;
+    FloatingActionButton boutonPicture;
+    private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
+    private static final int RC_IMAGE_PERMS = 100;
+    private Uri uriImageSelected;
+    private static final int RC_CHOOSE_PHOTO = 200;
+
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
@@ -95,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
-
 
 
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener
@@ -291,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                 mImageReader.setOnImageAvailableListener(
                         null, mBackgroundHandler);
 
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener,mBackgroundHandler);
+                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
 
                 Point displaySize = new Point();
                 getWindowManager().getDefaultDisplay().getSize(displaySize);
@@ -364,6 +378,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
         }
     }
 
@@ -463,12 +478,12 @@ public class MainActivity extends AppCompatActivity {
     private void takePicture() {
 
         try {
-
             CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
             mCaptureSession.capture(captureBuilder.build(), null, mBackgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
         }
-        catch (CameraAccessException e) { e.printStackTrace(); }
     }
 
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
@@ -482,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
 
                     // Set the destination file:
-                    File destination = new File( getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
+                    File destination = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
                     System.out.println(destination);
 
                     // Acquire the latest image:
@@ -497,16 +512,20 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         output = new FileOutputStream(destination);
                         output.write(bytes);
-                    }
-                    catch (IOException e) { e.printStackTrace(); }
-                    finally {
+                        uriImageSelected = Uri.fromFile(destination);
+                        uploadPhotoInFirebaseAndSendLocalisation();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
 
                         image.close();
-
                         if (null != output) {
 
-                            try { output.close(); }
-                            catch (IOException e) { e.printStackTrace(); }
+                            try {
+                                output.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
@@ -514,5 +533,43 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
+
+
+    protected OnFailureListener onFailureListener() {
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+            }
+
+        };
+    }
+
+    private void createLocalisationInFirestore(String url){
+
+
+            //String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+            //String username = this.getCurrentUser().getDisplayName();
+            //String uid = this.getCurrentUser().getUid();
+
+            LocalisationHelper.createLocalisation("url", 49,45).addOnFailureListener(this.onFailureListener());
+
+    }
+
+    private void uploadPhotoInFirebaseAndSendLocalisation() {
+        String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
+        // A - UPLOAD TO GCS
+        StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
+        mImageRef.putFile(this.uriImageSelected)
+                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
+                        // B - SAVE MESSAGE IN FIRESTORE
+                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase, 45, 49).addOnFailureListener(onFailureListener());
+                    }
+                })
+                .addOnFailureListener(this.onFailureListener());
+    }
 
 }
