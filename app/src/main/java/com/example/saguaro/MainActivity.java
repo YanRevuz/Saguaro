@@ -557,6 +557,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void uploadPhotoInFirebaseAndSendLocalisation() {
+       LocalisationHelper.findAll();
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         // A - UPLOAD TO GCS
         StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
