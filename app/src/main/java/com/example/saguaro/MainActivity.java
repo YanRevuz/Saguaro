@@ -9,7 +9,10 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -46,6 +49,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_IMAGE_PERMS = 100;
     private Uri uriImageSelected;
     private static final int RC_CHOOSE_PHOTO = 200;
+    private Context myContext;
 
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
@@ -140,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myContext = this;
 
         mTextureView = (TextureView) findViewById(R.id.textureView);
 
@@ -508,6 +515,7 @@ public class MainActivity extends AppCompatActivity {
                     byte[] bytes = new byte[buffer.remaining()];
                     buffer.get(bytes);
 
+
                     FileOutputStream output = null;
                     try {
                         output = new FileOutputStream(destination);
@@ -528,6 +536,11 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }
+
+                    Intent intent = new Intent(myContext, Filter.class);
+                    intent.putExtra("MonImage",uriImageSelected.toString());
+                    changeActivity(intent);
+
 
                 }
             });
@@ -570,6 +583,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(this.onFailureListener());
+    }
+
+    private void changeActivity(Intent i){
+        startActivity(i);
     }
 
 }
