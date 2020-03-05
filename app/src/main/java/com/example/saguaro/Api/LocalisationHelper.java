@@ -1,15 +1,20 @@
 package com.example.saguaro.Api;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.example.saguaro.Bean.Localisation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -56,8 +61,21 @@ public class LocalisationHelper {
                 for(DocumentSnapshot doc : myListOfDocuments) {
                     System.out.println("DOOOOOOOOOOOOOOOOOOC : " );
                     System.out.println(doc.getData());
+                    System.out.println();
                 }
             }
         });
+    }
+    static byte[] myPicture;
+
+    public static byte[] getOneImage(String uri){
+
+         FirebaseStorage.getInstance().getReference().child(uri).getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+               myPicture = bytes;
+            }
+        });
+        return myPicture;
     }
 }
