@@ -1,20 +1,19 @@
 package com.example.saguaro;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.saguaro.Localisation.Position;
+import com.example.saguaro.Services.Position;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -50,9 +49,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         position = new Position(this);
         Location location = position.getProvider();
         // Add a marker in Sydney and move the camera
-
         LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("MyLocation"));
+        MarkerOptions marker = new MarkerOptions().position(myLocation).title("MyLocation");
+        mMap.addMarker(marker);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
     }
 }
