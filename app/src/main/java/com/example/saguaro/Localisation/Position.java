@@ -2,7 +2,6 @@ package com.example.saguaro.Localisation;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -95,5 +94,13 @@ public class Position {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+    public double getLongitude() {
+       return this.getProvider().getLongitude();
+    }
+
+    public double getlatitude() {
+        return this.getProvider().getLatitude();
     }
 }
