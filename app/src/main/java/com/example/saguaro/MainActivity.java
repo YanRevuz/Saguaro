@@ -11,14 +11,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -49,7 +46,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
-
 
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener
             = new TextureView.SurfaceTextureListener() {
@@ -538,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Intent intent = new Intent(myContext, Filter.class);
-                    intent.putExtra("MonImage",uriImageSelected.toString());
+                    intent.putExtra("MonImage", uriImageSelected.toString());
                     changeActivity(intent);
 
 
@@ -558,14 +553,14 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private void createLocalisationInFirestore(String url){
+    private void createLocalisationInFirestore(String url) {
 
 
-            //String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
-            //String username = this.getCurrentUser().getDisplayName();
-            //String uid = this.getCurrentUser().getUid();
+        //String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+        //String username = this.getCurrentUser().getDisplayName();
+        //String uid = this.getCurrentUser().getUid();
 
-            LocalisationHelper.createLocalisation("url", 49,45).addOnFailureListener(this.onFailureListener());
+        LocalisationHelper.createLocalisation("url", 49, 45).addOnFailureListener(this.onFailureListener());
 
     }
 
@@ -585,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(this.onFailureListener());
     }
 
-    private void changeActivity(Intent i){
+    private void changeActivity(Intent i) {
         startActivity(i);
     }
 
