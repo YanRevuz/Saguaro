@@ -48,4 +48,5 @@ public class Localisation {
     public void setUrlPicture(@Nullable String urlPicture) {
         this.urlPicture = urlPicture;
     }
+
 }
