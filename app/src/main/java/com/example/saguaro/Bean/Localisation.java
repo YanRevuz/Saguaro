@@ -2,7 +2,6 @@ package com.example.saguaro.Bean;
 
 import androidx.annotation.Nullable;
 
-import java.util.UUID;
 
 public class Localisation {
 
@@ -11,8 +10,7 @@ public class Localisation {
     private double longitude;
     private double latitude;
 
-    public Localisation(String uid, @Nullable String urlPicture, double longitude, double latitude) {
-        this.uid = uid;
+    public Localisation(@Nullable String urlPicture, double longitude, double latitude) {
         this.urlPicture = urlPicture;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -26,12 +24,12 @@ public class Localisation {
         this.longitude = longitude;
     }
 
-    public double getLattitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLattitude(double lattitude) {
-        this.latitude = lattitude;
+    public void setLatitude(double Latitude) {
+        this.latitude = Latitude;
     }
 
     public String getUid() {
@@ -51,11 +49,4 @@ public class Localisation {
         this.urlPicture = urlPicture;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "688466699111",
+    "firebase_url": "https://saguaro-eb50b.firebaseio.com",
+    "project_id": "saguaro-eb50b",
+    "storage_bucket": "saguaro-eb50b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688466699111:android:32dd0dc1b2b7c5873345c2",
+        "android_client_info": {
+          "package_name": "com.example.saguaro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688466699111-3ts3v5tnnhtt3516cvkc5qh2m9ng8lpj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.saguaro",
+            "certificate_hash": "a83b6a9374960ddc8847c9532d5eaf8b912a5cdb"
+          }
+        },
+        {
+          "client_id": "688466699111-fpi7p77tpi3kgf6798og5ts8b1g4sj1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI7ZANVzeYyRgdGw-PlKae3J6rtJA4aEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688466699111-fpi7p77tpi3kgf6798og5ts8b1g4sj1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
