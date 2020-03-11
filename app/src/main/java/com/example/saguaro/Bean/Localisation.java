@@ -6,7 +6,8 @@ import androidx.annotation.Nullable;
 public class Localisation {
 
     private String uid;
-    @Nullable private String urlPicture;
+    @Nullable
+    private String urlPicture;
     private double longitude;
     private double latitude;
 

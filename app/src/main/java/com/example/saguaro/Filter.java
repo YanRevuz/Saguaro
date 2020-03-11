@@ -1,19 +1,13 @@
 package com.example.saguaro;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -21,32 +15,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.saguaro.Api.LocalisationHelper;
 import com.example.saguaro.Services.Position;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -61,23 +43,19 @@ import com.xiaopo.flying.sticker.TextSticker;
 import com.xiaopo.flying.sticker.ZoomIconEvent;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
 public class Filter extends AppCompatActivity {
     private ImageView imageview;
-    Location currentLocation;
 
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
     public FilterList filterList;
     FloatingActionButton saveImageButton, addicon;
     Bitmap bitmapOrigine;
-    private  Position positionService;
-    static Bitmap drawBitmap;
-    static Paint drawPaint;
+    private Position positionService;
     private static final String TAG = MainActivity.class.getSimpleName();
     private StickerView stickerView;
 
@@ -89,6 +67,12 @@ public class Filter extends AppCompatActivity {
         imageview = (ImageView) findViewById(R.id.imageview);
 
         stickerView = findViewById(R.id.sticker_view);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
 
         filterList = FilterList.TRANSPARENT;
         if (bitmapOrigine == null) {
@@ -112,7 +96,7 @@ public class Filter extends AppCompatActivity {
 
         ////GESTION STICKER
 
-        addicon= findViewById(R.id.addicon);
+        addicon = findViewById(R.id.addicon);
         addicon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,20 +190,19 @@ public class Filter extends AppCompatActivity {
     }
 
     private void uploadPhotoInFirebaseAndSendLocalisation(byte[] bytes) {
-        requestLocationPermission();
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         // A - UPLOAD TO GCS
         StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
         mImageRef.putBytes(bytes).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
-                        // B - SAVE MESSAGE IN FIRESTORE
-                    Location location = positionService.fffff();
-                        System.out.println(location.toString() + " GNEUUUUUUUUUUU");
-                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase,location.getLongitude(),location.getLatitude()).addOnFailureListener(onFailureListener());
-                    }
-                })
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
+                // B - SAVE MESSAGE IN FIRESTORE
+                Location location = positionService.getLocation();
+                System.out.println(location.toString() + " GNEUUUUUUUUUUU");
+                LocalisationHelper.createLocalisation(pathImageSavedInFirebase, location.getLongitude(), location.getLatitude()).addOnFailureListener(onFailureListener());
+            }
+        })
                 .addOnFailureListener(this.onFailureListener());
     }
 
@@ -231,22 +214,22 @@ public class Filter extends AppCompatActivity {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    x1 = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    x2 = event.getX();
-                    float deltaX = x2 - x1;
-                    if (deltaX > MIN_DISTANCE) {
-                        ChooseFilter(true);
-                    } else if (deltaX < MIN_DISTANCE) {
-                        ChooseFilter(false);
-                    } else {
-                        // consider as something else - a screen tap for example
-                    }
-                    break;
-            }
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (deltaX > MIN_DISTANCE) {
+                    ChooseFilter(true);
+                } else if (deltaX < MIN_DISTANCE) {
+                    ChooseFilter(false);
+                } else {
+                    // consider as something else - a screen tap for example
+                }
+                break;
+        }
         return super.onTouchEvent(event);
     }
 
@@ -267,31 +250,31 @@ public class Filter extends AppCompatActivity {
         ColorMatrix matrix;
         switch (filterList) {
             case BLUE:
-                matrix = new ColorMatrix(new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0 });
+                matrix = new ColorMatrix(new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0});
                 drawable = (BitmapDrawable) imageview.getDrawable();
                 currentFilter = drawable.getBitmap();
                 Toast.makeText(this, "Blue filter", Toast.LENGTH_SHORT).show();
                 break;
             case GRAY:
-                matrix = new ColorMatrix(new float[]{(float)0.33, (float)0.33, (float)0.33, 0, 0, (float)0.33, (float)0.33, (float)0.33, 0, 0, (float)0.33, (float)0.33, (float)0.33, 0, 0, 0, 0, 0, 1, 0 });
+                matrix = new ColorMatrix(new float[]{(float) 0.33, (float) 0.33, (float) 0.33, 0, 0, (float) 0.33, (float) 0.33, (float) 0.33, 0, 0, (float) 0.33, (float) 0.33, (float) 0.33, 0, 0, 0, 0, 0, 1, 0});
                 drawable = (BitmapDrawable) imageview.getDrawable();
                 currentFilter = drawable.getBitmap();
                 Toast.makeText(this, "Gray filter", Toast.LENGTH_SHORT).show();
                 break;
             case GREEN:
-                matrix = new ColorMatrix(new float[]{0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0  });
+                matrix = new ColorMatrix(new float[]{0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0});
                 drawable = (BitmapDrawable) imageview.getDrawable();
                 currentFilter = drawable.getBitmap();
                 Toast.makeText(this, "Green filter", Toast.LENGTH_SHORT).show();
                 break;
             case RED:
-                matrix = new ColorMatrix(new float[]{1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 });
+                matrix = new ColorMatrix(new float[]{1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0});
                 drawable = (BitmapDrawable) imageview.getDrawable();
                 currentFilter = drawable.getBitmap();
                 Toast.makeText(this, "Red filter", Toast.LENGTH_SHORT).show();
                 break;
             default:
-                matrix = new ColorMatrix(new float[]{ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 });
+                matrix = new ColorMatrix(new float[]{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0});
                 currentFilter = bitmapOrigine;
                 Toast.makeText(this, "No filter", Toast.LENGTH_SHORT).show();
                 break;
@@ -307,11 +290,7 @@ public class Filter extends AppCompatActivity {
         return bitmap;
     }
 
-
-
     public void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1410);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1410);
     }
-
-
 }
