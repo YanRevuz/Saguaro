@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,14 +30,23 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.saguaro.Api.LocalisationHelper;
 import com.example.saguaro.Services.Position;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -57,14 +67,15 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class Filter extends AppCompatActivity {
-
     private ImageView imageview;
+    Location currentLocation;
+
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
     public FilterList filterList;
     FloatingActionButton saveImageButton, addicon;
     Bitmap bitmapOrigine;
-    private  Position positionService = new Position(this);
+    private  Position positionService;
     static Bitmap drawBitmap;
     static Paint drawPaint;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -74,7 +85,7 @@ public class Filter extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fetch_image);
-
+        positionService = new Position(Filter.this);
         imageview = (ImageView) findViewById(R.id.imageview);
 
         stickerView = findViewById(R.id.sticker_view);
@@ -195,6 +206,7 @@ public class Filter extends AppCompatActivity {
     }
 
     private void uploadPhotoInFirebaseAndSendLocalisation(byte[] bytes) {
+        requestLocationPermission();
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         // A - UPLOAD TO GCS
         StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
@@ -203,8 +215,9 @@ public class Filter extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
                         // B - SAVE MESSAGE IN FIRESTORE
-                    Location location = positionService.getProviderBis();
-                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase,location.getLongitude(),23).addOnFailureListener(onFailureListener());
+                    Location location = positionService.fffff();
+                        System.out.println(location.toString() + " GNEUUUUUUUUUUU");
+                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase,location.getLongitude(),location.getLatitude()).addOnFailureListener(onFailureListener());
                     }
                 })
                 .addOnFailureListener(this.onFailureListener());
@@ -236,6 +249,7 @@ public class Filter extends AppCompatActivity {
             }
         return super.onTouchEvent(event);
     }
+
 
     /**
      * Available colors :
@@ -293,6 +307,11 @@ public class Filter extends AppCompatActivity {
         return bitmap;
     }
 
+
+
+    public void requestLocationPermission() {
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1410);
+    }
 
 
 }
