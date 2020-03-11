@@ -1,8 +1,7 @@
 package com.example.saguaro;
 
 public enum FilterList {
-    BLUE, CYAN, GRAY, GREEN, LTGRAY,
-    MAGENTA, RED, TRANSPARENT, YELLOW;
+    BLUE, GRAY, GREEN, RED, TRANSPARENT;
 
     private static FilterList[] vals = values();
 
