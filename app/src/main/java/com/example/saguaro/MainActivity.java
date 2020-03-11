@@ -372,17 +372,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MainActivity.this, "ERROR: Camera permissions not granted", Toast.LENGTH_LONG).show();
             }
-        } else {
+        }else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
         }
     }
+
 
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
@@ -516,7 +516,6 @@ public class MainActivity extends AppCompatActivity {
                         output = new FileOutputStream(destination);
                         output.write(bytes);
                         uriImageSelected = Uri.fromFile(destination);
-                        uploadPhotoInFirebaseAndSendLocalisation();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -542,43 +541,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-    protected OnFailureListener onFailureListener() {
-        return new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
-            }
-
-        };
-    }
-
-    private void createLocalisationInFirestore(String url) {
-
-
-        //String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
-        //String username = this.getCurrentUser().getDisplayName();
-        //String uid = this.getCurrentUser().getUid();
-
-        LocalisationHelper.createLocalisation("url", 49, 45).addOnFailureListener(this.onFailureListener());
-
-    }
-
-    private void uploadPhotoInFirebaseAndSendLocalisation() {
-        String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
-        // A - UPLOAD TO GCS
-        StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
-        mImageRef.putFile(this.uriImageSelected)
-                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
-                        // B - SAVE MESSAGE IN FIRESTORE
-                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase, 45, 49).addOnFailureListener(onFailureListener());
-                    }
-                })
-                .addOnFailureListener(this.onFailureListener());
-    }
 
     private void changeActivity(Intent i) {
         startActivity(i);
