@@ -1,7 +1,9 @@
 package com.example.saguaro;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -196,14 +198,13 @@ public class Filter extends AppCompatActivity {
         String uuid = UUID.randomUUID().toString(); // GENERATE UNIQUE STRING
         // A - UPLOAD TO GCS
         StorageReference mImageRef = FirebaseStorage.getInstance().getReference(uuid);
-        mImageRef.putBytes(bytes)
-                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        mImageRef.putBytes(bytes).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
                         // B - SAVE MESSAGE IN FIRESTORE
-                    //    Location location = positionService.getProvider();
-                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase,45,23).addOnFailureListener(onFailureListener());
+                    Location location = positionService.getProviderBis();
+                        LocalisationHelper.createLocalisation(pathImageSavedInFirebase,location.getLongitude(),23).addOnFailureListener(onFailureListener());
                     }
                 })
                 .addOnFailureListener(this.onFailureListener());
@@ -291,5 +292,7 @@ public class Filter extends AppCompatActivity {
 
         return bitmap;
     }
+
+
 
 }

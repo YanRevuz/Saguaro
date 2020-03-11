@@ -2,13 +2,26 @@ package com.example.saguaro.Services;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.example.saguaro.Filter;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.List;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 public class Position {
 
@@ -17,29 +30,12 @@ public class Position {
     private LocationManager locationManager;
 
     private Activity activity;
+    Location currentLocation;
 
     public Position(Activity act) {
         this.activity = act;
     }
 
-    private Criteria getCritere() {
-        Criteria critere = new Criteria();
-// Pour indiquer la précision voulue
-// On peut mettre ACCURACY_FINE pour une haute précision ou ACCURACY_COARSE pour une moins bonne précision
-        critere.setAccuracy(Criteria.ACCURACY_COARSE);
-// Est-ce que le fournisseur doit être capable de donner une altitude ?
-        critere.setAltitudeRequired(false);
-// Est-ce que le fournisseur doit être capable de donner une direction ?
-        critere.setBearingRequired(false);
-// Est-ce que le fournisseur peut être payant ?
-        critere.setCostAllowed(false);
-// Pour indiquer la consommation d'énergie demandée
-// Criteria.POWER_HIGH pour une haute consommation, Criteria.POWER_MEDIUM pour une consommation moyenne et Criteria.POWER_LOW pour une basse consommation
-        critere.setPowerRequirement(Criteria.POWER_MEDIUM);
-// Est-ce que le fournisseur doit être capable de donner une vitesse ?
-        critere.setSpeedRequired(false);
-        return critere;
-    }
 
 //    private void requestLocationPermission() {
 //        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
@@ -51,9 +47,7 @@ public class Position {
 //    }
 
     public Location getProvider() {
-        locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        Criteria critere = this.getCritere();
-        fournisseur = locationManager.getBestProvider(critere, true);
+        locationManager = (LocationManager) activity.getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -69,7 +63,22 @@ public class Position {
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
         }
-        return locationManager.getLastKnownLocation(fournisseur);
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+
+    public Location getProviderBis(){
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(activity);
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+        }
+
+        client.getLastLocation().addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                currentLocation = location;
+            }
+        });
+        return currentLocation;
     }
 
     public String getFournisseur() {
@@ -102,5 +111,9 @@ public class Position {
 
     public double getlatitude() {
         return this.getProvider().getLatitude();
+    }
+
+    public void requestLocationPermission() {
+        ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1410);
     }
 }
