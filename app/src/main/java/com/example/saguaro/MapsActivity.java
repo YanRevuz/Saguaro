@@ -2,8 +2,11 @@ package com.example.saguaro;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +27,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Context context;
     private GoogleMap mMap;
+    private Button backToCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         context = this;
+
+        this.backToCamera = findViewById(R.id.backToCamera);
+        backToCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,MainActivity.class);
+                startActivity(intent);
+            }go
+        });
 
     }
 
