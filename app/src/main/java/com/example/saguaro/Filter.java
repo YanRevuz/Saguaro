@@ -26,11 +26,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import com.example.saguaro.Services.Position;
+
 import com.example.saguaro.Api.LocalisationHelper;
+import com.example.saguaro.Services.Position;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -55,8 +55,6 @@ public class Filter extends AppCompatActivity {
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
     public FilterList filterList;
-    FloatingActionButton saveImageButton;
-    private ImageView addicon, sadFace;
     Bitmap bitmapOrigine;
     private Position positionService;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -88,7 +86,7 @@ public class Filter extends AppCompatActivity {
                 Toast.makeText(Filter.this, "Failed!", Toast.LENGTH_SHORT).show();
             }
         }
-        saveImageButton = findViewById(R.id.saveImage);
+        ImageView saveImageButton = (ImageView) findViewById(R.id.saveImage);
         saveImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +99,7 @@ public class Filter extends AppCompatActivity {
 
         ////GESTION STICKER
 
-        addicon = (ImageView) findViewById(R.id.addicon);
+        ImageView addicon = (ImageView) findViewById(R.id.addicon);
         addicon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,7 +107,7 @@ public class Filter extends AppCompatActivity {
             }
         });
 
-        sadFace = (ImageView) findViewById(R.id.sadFace);
+        ImageView sadFace = (ImageView) findViewById(R.id.sadFace);
         sadFace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
