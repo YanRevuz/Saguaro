@@ -18,12 +18,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
-
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private Context context;
-    private GoogleMap mMap;
-    private ImageView backToCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +33,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         context = this;
 
-        this.backToCamera = (ImageView) findViewById(R.id.backToCamera);
+        ImageView backToCamera = (ImageView) findViewById(R.id.backToCamera);
         backToCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,8 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        LocalisationHelper.findAll(mMap, context);
+        LocalisationHelper.findAll(googleMap, context);
     }
 
     public static void callbackFirebase(List<Localisation> localisations, GoogleMap mMap, Context c) {

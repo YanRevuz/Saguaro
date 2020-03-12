@@ -35,7 +35,7 @@ public class LocalisationHelper {
 
     // --- CREATE ---
 
-    public static CollectionReference getLocalisationsCollection() {
+    private static CollectionReference getLocalisationsCollection() {
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
@@ -44,7 +44,6 @@ public class LocalisationHelper {
     public static Task<DocumentReference> createLocalisation(String urlPicture, double longitude, double latitude) {
         Localisation LocalisationToCreate = new Localisation(urlPicture, longitude, latitude);
         return LocalisationHelper.getLocalisationsCollection().add(LocalisationToCreate);
-
     }
 
     // --- DELETE ---
@@ -56,7 +55,6 @@ public class LocalisationHelper {
     public static Task<Void> deleteLocalisation(String uid) {
         return LocalisationHelper.getLocalisationsCollection().document(uid).delete();
     }
-
 
     //-- GET List img --
     public static void findAll(final GoogleMap mMap, final Context context) {

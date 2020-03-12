@@ -28,6 +28,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.saguaro.Api.LocalisationHelper;
+import com.example.saguaro.Enum.Emoji;
+import com.example.saguaro.Enum.FilterList;
 import com.example.saguaro.Services.Position;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,7 +57,7 @@ public class Filter extends AppCompatActivity {
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
     public FilterList filterList;
-    Bitmap bitmapOrigine;
+    private Bitmap bitmapOrigine;
     private Position positionService;
     private static final String TAG = MainActivity.class.getSimpleName();
     private StickerView stickerView;
@@ -165,7 +167,6 @@ public class Filter extends AppCompatActivity {
                 Log.d(TAG, "onStickerDragFinished");
             }
 
-
             @Override
             public void onStickerZoomFinished(@NonNull Sticker sticker) {
                 Log.d(TAG, "onStickerZoomFinished");
@@ -181,7 +182,6 @@ public class Filter extends AppCompatActivity {
                 Log.d(TAG, "onDoubleTapped: double tap will be with two click");
             }
         });
-
     }
 
     private void loadSticker(Emoji face) {
