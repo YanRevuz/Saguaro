@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -40,6 +41,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -300,8 +302,6 @@ public class MainActivity extends AppCompatActivity {
                 mImageReader.setOnImageAvailableListener(
                         null, mBackgroundHandler);
 
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
-
                 Point displaySize = new Point();
                 getWindowManager().getDefaultDisplay().getSize(displaySize);
                 int rotatedPreviewWidth = width;
@@ -473,65 +473,54 @@ public class MainActivity extends AppCompatActivity {
 
     private void takePicture() {
 
+        // Set the destination file:
+        File destination = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
+        System.out.println(destination);
+
+        // Acquire the latest image:
+        //Image image = reader.acquireLatestImage();
+
+        // Save the image:
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        mTextureView.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+
+        byte[] bytes = stream.toByteArray();
+
+
+        FileOutputStream output = null;
         try {
+            output = new FileOutputStream(destination);
+            output.write(bytes);
+            uriImageSelected = Uri.fromFile(destination);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+
+            //image.close();
+            if (null != output) {
+
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Intent intent = new Intent(myContext, Filter.class);
+        intent.putExtra("MonImage", uriImageSelected.toString());
+        changeActivity(intent);
+        /*try {
             CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
             mCaptureSession.capture(captureBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
-    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
-
-        @Override
-        public void onImageAvailable(final ImageReader reader) {
-
-            mBackgroundHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-
-                    // Set the destination file:
-                    File destination = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
-                    System.out.println(destination);
-
-                    // Acquire the latest image:
-                    Image image = reader.acquireLatestImage();
-
-                    // Save the image:
-                    ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                    byte[] bytes = new byte[buffer.remaining()];
-                    buffer.get(bytes);
-
-
-                    FileOutputStream output = null;
-                    try {
-                        output = new FileOutputStream(destination);
-                        output.write(bytes);
-                        uriImageSelected = Uri.fromFile(destination);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-
-                        image.close();
-                        if (null != output) {
-
-                            try {
-                                output.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    Intent intent = new Intent(myContext, Filter.class);
-                    intent.putExtra("MonImage", uriImageSelected.toString());
-                    changeActivity(intent);
-                }
-            });
-        }
-    };
 
     private void changeActivity(Intent i) {
         startActivity(i);
