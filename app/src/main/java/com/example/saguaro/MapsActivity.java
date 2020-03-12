@@ -3,27 +3,24 @@ package com.example.saguaro;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.FloatProperty;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-//import com.example.saguaro.Services.Position;
 import com.example.saguaro.Api.LocalisationHelper;
 import com.example.saguaro.Bean.Localisation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+
+//import com.example.saguaro.Services.Position;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -46,7 +43,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         backToCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context,MainActivity.class);
+                Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -66,12 +63,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LocalisationHelper.findAll(mMap,context);
+        LocalisationHelper.findAll(mMap, context);
     }
 
-    public static void callbackFirebase(List<Localisation> localisations, GoogleMap mMap, Context c){
-        for(Localisation l : localisations){
-            LocalisationHelper.getOneImage(mMap,l,c);
+    public static void callbackFirebase(List<Localisation> localisations, GoogleMap mMap, Context c) {
+        for (Localisation l : localisations) {
+            LocalisationHelper.getOneImage(mMap, l, c);
         }
     }
 

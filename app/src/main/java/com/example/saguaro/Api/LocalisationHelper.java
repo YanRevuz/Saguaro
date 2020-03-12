@@ -11,6 +11,7 @@ import com.example.saguaro.MapsActivity;
 import com.example.saguaro.MarkerCustom;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -83,7 +84,6 @@ public class LocalisationHelper {
     }
 
     public static void getOneImage(final GoogleMap mMap, final Localisation localisation, final Context context) {
-
         FirebaseStorage.getInstance().getReference().child(localisation.getUrlPicture()).getBytes(1024 * 1024 * 10).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
