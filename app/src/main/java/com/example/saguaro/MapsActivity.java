@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.FloatProperty;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Context context;
     private GoogleMap mMap;
-    private Button backToCamera;
+    private FloatingActionButton backToCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
