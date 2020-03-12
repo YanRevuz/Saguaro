@@ -11,11 +11,9 @@ import com.google.android.gms.maps.model.Marker;
 
 public class MarkerCustom implements GoogleMap.InfoWindowAdapter {
     private Context context;
-    private Bitmap bitmap;
 
-    public MarkerCustom(Context context, Bitmap bitmap) {
+    public MarkerCustom(Context context) {
         this.context = context;
-        this.bitmap = bitmap;
     }
 
     @Override
@@ -28,7 +26,7 @@ public class MarkerCustom implements GoogleMap.InfoWindowAdapter {
         View view = ((Activity) context).getLayoutInflater().inflate(R.layout.marker_custom, null);
 
         ImageView imgview = view.findViewById(R.id.imageView);
-        imgview.setImageBitmap(bitmap);
+        imgview.setImageBitmap((Bitmap)marker.getTag());
         return view;
     }
 }

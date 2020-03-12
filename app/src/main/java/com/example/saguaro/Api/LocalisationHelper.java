@@ -10,7 +10,6 @@ import com.example.saguaro.Bean.Localisation;
 import com.example.saguaro.MapsActivity;
 import com.example.saguaro.MarkerCustom;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,7 +36,6 @@ public class LocalisationHelper {
     // --- CREATE ---
 
     public static CollectionReference getLocalisationsCollection() {
-        System.out.println(FirebaseFirestore.getInstance().collection(COLLECTION_NAME));
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
@@ -61,7 +59,7 @@ public class LocalisationHelper {
 
 
     //-- GET List img --
-    public  static void findAll(final GoogleMap mMap, final Context context) {
+    public static void findAll(final GoogleMap mMap, final Context context) {
         final List<Localisation> res = new ArrayList<>();
         LocalisationHelper.getLocalisationsCollection().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             List<DocumentSnapshot> myListOfDocuments;
@@ -73,28 +71,29 @@ public class LocalisationHelper {
                 }
                 for (DocumentSnapshot doc : myListOfDocuments) {
                     // url , longitude , latitude
-                    Localisation l = new Localisation(doc.getData().values().toArray()[3].toString(),
-                            Double.parseDouble(doc.getData().values().toArray()[2].toString()),
-                            Double.parseDouble(doc.getData().values().toArray()[0].toString()));
+                    Localisation l = new Localisation(doc.getData().values().toArray()[2].toString(),
+                            Double.parseDouble(doc.getData().values().toArray()[3].toString()),
+                            Double.parseDouble(doc.getData().values().toArray()[1].toString()));
                     res.add(l);
                 }
 
-                MapsActivity.callbackFirebase(res,mMap,context);
+                MapsActivity.callbackFirebase(res, mMap, context);
             }
         });
     }
 
     public static void getOneImage(final GoogleMap mMap, final Localisation localisation, final Context context) {
 
-        FirebaseStorage.getInstance().getReference().child(localisation.getUrlPicture()).getBytes(1024 * 1024*10).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        FirebaseStorage.getInstance().getReference().child(localisation.getUrlPicture()).getBytes(1024 * 1024 * 10).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 myPicture = bytes;
-                Bitmap bitmap =  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                MarkerCustom markerCustom = new MarkerCustom(context,bitmap);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                MarkerCustom markerCustom = new MarkerCustom(context);
                 mMap.setInfoWindowAdapter(markerCustom);
-                LatLng location = new LatLng(localisation.getLatitude(),localisation.getLongitude());
+                LatLng location = new LatLng(localisation.getLatitude(), localisation.getLongitude());
                 Marker m = mMap.addMarker(new MarkerOptions().position(location));
+                m.setTag(bitmap);
             }
         });
     }

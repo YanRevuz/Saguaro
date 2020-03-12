@@ -475,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the destination file:
         File destination = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
-        System.out.println(destination);
 
         // Acquire the latest image:
         //Image image = reader.acquireLatestImage();

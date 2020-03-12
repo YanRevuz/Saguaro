@@ -1,6 +1,8 @@
 package com.example.saguaro;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -58,6 +60,7 @@ public class Filter extends AppCompatActivity {
     private Position positionService;
     private static final String TAG = MainActivity.class.getSimpleName();
     private StickerView stickerView;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,8 @@ public class Filter extends AppCompatActivity {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 stickerView.createBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 uploadPhotoInFirebaseAndSendLocalisation(stream.toByteArray());
+                Intent intent = new Intent(context, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -215,7 +220,6 @@ public class Filter extends AppCompatActivity {
                 String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
                 // B - SAVE MESSAGE IN FIRESTORE
                 Location location = positionService.getLocation();
-                System.out.println(location.toString() + " GNEUUUUUUUUUUU");
                 LocalisationHelper.createLocalisation(pathImageSavedInFirebase, location.getLongitude(), location.getLatitude()).addOnFailureListener(onFailureListener());
             }
         })
