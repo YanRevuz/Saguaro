@@ -2,7 +2,6 @@ package com.example.saguaro.Bean;
 
 import androidx.annotation.Nullable;
 
-
 public class Localisation {
 
     private String uid;

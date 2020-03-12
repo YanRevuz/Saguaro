@@ -25,8 +25,8 @@ public class MarkerCustom implements GoogleMap.InfoWindowAdapter {
     public View getInfoContents(Marker marker) {
         View view = ((Activity) context).getLayoutInflater().inflate(R.layout.marker_custom, null);
 
-        ImageView imgview = view.findViewById(R.id.imageView);
-        imgview.setImageBitmap((Bitmap)marker.getTag());
+        ImageView imageView = view.findViewById(R.id.imageView);
+        imageView.setImageBitmap((Bitmap) marker.getTag());
         return view;
     }
 }

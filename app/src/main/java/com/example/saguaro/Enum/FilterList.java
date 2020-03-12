@@ -1,4 +1,4 @@
-package com.example.saguaro;
+package com.example.saguaro.Enum;
 
 public enum FilterList {
     BLUE, GRAY, GREEN, RED, TRANSPARENT;

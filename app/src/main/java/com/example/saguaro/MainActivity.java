@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
         File destination = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_" + 1 + ".jpg");
 
         // Acquire the latest image:
-        //Image image = reader.acquireLatestImage();
+        // Image image = reader.acquireLatestImage();
 
         // Save the image:
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -497,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } finally {
 
-            //image.close();
+            // image.close();
             if (null != output) {
 
                 try {
@@ -511,13 +511,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(myContext, Filter.class);
         intent.putExtra("MonImage", uriImageSelected.toString());
         changeActivity(intent);
-        /*try {
-            CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(mImageReader.getSurface());
-            mCaptureSession.capture(captureBuilder.build(), null, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }*/
     }
 
     @Override
@@ -537,7 +530,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onTouchEvent(event);
     }
-
 
     private void changeActivity(Intent i) {
         startActivity(i);
