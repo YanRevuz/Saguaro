@@ -46,7 +46,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 Intent intent = new Intent(context,MainActivity.class);
                 startActivity(intent);
-            }go
+            }
         });
 
     }
