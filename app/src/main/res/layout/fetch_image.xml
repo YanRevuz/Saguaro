@@ -26,18 +26,7 @@
 
     </com.xiaopo.flying.sticker.StickerView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/saveImage"
-        android:layout_width="62dp"
-        android:layout_height="62dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.952"
-        app:srcCompat="@android:drawable/btn_radio" />
+
 
     <ImageView
         android:id="@+id/addicon"
@@ -62,5 +51,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/sad_face" />
+
+    <ImageView
+        android:id="@+id/saveImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sticker_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/sticker_view"
+        app:layout_constraintTop_toTopOf="@+id/sticker_view"
+        app:layout_constraintVertical_bias="0.98"
+        app:srcCompat="@drawable/save" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

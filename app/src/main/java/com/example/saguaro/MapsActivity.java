@@ -5,28 +5,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.saguaro.Api.LocalisationHelper;
 import com.example.saguaro.Bean.Localisation;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-//import com.example.saguaro.Services.Position;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private Context context;
     private GoogleMap mMap;
-    private FloatingActionButton backToCamera;
+    private ImageView backToCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +36,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         context = this;
 
-        this.backToCamera = findViewById(R.id.backToCamera);
+        this.backToCamera = (ImageView) findViewById(R.id.backToCamera);
         backToCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,9 +44,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
-
     }
-
 
     /**
      * Manipulates the map once available.
@@ -71,5 +66,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LocalisationHelper.getOneImage(mMap, l, c);
         }
     }
-
 }
