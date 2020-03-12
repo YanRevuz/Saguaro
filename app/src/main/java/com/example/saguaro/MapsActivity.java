@@ -44,13 +44,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+       /* mMap = googleMap;
         position = new Position(this);
         Location location = position.getProvider();
         // Add a marker in Sydney and move the camera
 
         LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.addMarker(new MarkerOptions().position(myLocation).title("MyLocation"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));*/
     }
 }
