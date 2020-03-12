@@ -31,6 +31,7 @@ import com.example.saguaro.Api.LocalisationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -94,8 +95,7 @@ public class Filter extends AppCompatActivity {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 stickerView.createBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 uploadPhotoInFirebaseAndSendLocalisation(stream.toByteArray());
-                Intent intent = new Intent(context, MainActivity.class);
-                startActivity(intent);
+
             }
         });
 
@@ -220,7 +220,13 @@ public class Filter extends AppCompatActivity {
                 String pathImageSavedInFirebase = taskSnapshot.getMetadata().getPath().toString();
                 // B - SAVE MESSAGE IN FIRESTORE
                 Location location = positionService.getLocation();
-                LocalisationHelper.createLocalisation(pathImageSavedInFirebase, location.getLongitude(), location.getLatitude()).addOnFailureListener(onFailureListener());
+                LocalisationHelper.createLocalisation(pathImageSavedInFirebase, location.getLongitude(), location.getLatitude()).addOnFailureListener(onFailureListener()).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Intent intent = new Intent(context, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
         })
                 .addOnFailureListener(this.onFailureListener());

@@ -72,9 +72,9 @@ public class LocalisationHelper {
                 }
                 for (DocumentSnapshot doc : myListOfDocuments) {
                     // url , longitude , latitude
-                    Localisation l = new Localisation(doc.getData().values().toArray()[2].toString(),
-                            Double.parseDouble(doc.getData().values().toArray()[3].toString()),
-                            Double.parseDouble(doc.getData().values().toArray()[1].toString()));
+                    Localisation l = new Localisation(doc.getData().get("urlPicture").toString(),
+                            Double.parseDouble(doc.getData().get("longitude").toString()),
+                            Double.parseDouble(doc.getData().get("latitude").toString()));
                     res.add(l);
                 }
 
