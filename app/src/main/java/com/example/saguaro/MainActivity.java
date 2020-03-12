@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -78,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
     private Uri uriImageSelected;
     private static final int RC_CHOOSE_PHOTO = 200;
     private Context myContext;
-
+    private float y1, y2;
+    static final int MIN_DISTANCE = 200;
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
@@ -518,6 +520,24 @@ public class MainActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }*/
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                y1 = event.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                y2 = event.getY();
+                float deltaY = y2 - y1;
+                if (deltaY > MIN_DISTANCE) {
+                    Intent intent = new Intent(this, MapsActivity.class);
+                    startActivity(intent);
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
 
