@@ -53,7 +53,8 @@ public class Filter extends AppCompatActivity {
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
     public FilterList filterList;
-    FloatingActionButton saveImageButton, addicon;
+    FloatingActionButton saveImageButton;
+    private ImageView addicon, sadFace;
     Bitmap bitmapOrigine;
     private Position positionService;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -96,12 +97,19 @@ public class Filter extends AppCompatActivity {
 
         ////GESTION STICKER
 
-        addicon = findViewById(R.id.addicon);
+        addicon = (ImageView) findViewById(R.id.addicon);
         addicon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                loadSticker(Emoji.SMILEYFACE);
+            }
+        });
 
-                loadSticker();
+        sadFace = (ImageView) findViewById(R.id.sadFace);
+        sadFace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadSticker(Emoji.SADFACE);
             }
         });
 
@@ -174,9 +182,18 @@ public class Filter extends AppCompatActivity {
 
     }
 
-    private void loadSticker() {
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_launcher_background);
-        stickerView.addSticker(new DrawableSticker(drawable));
+    private void loadSticker(Emoji face) {
+        Drawable drawable;
+        switch (face) {
+            case SADFACE:
+                drawable = ContextCompat.getDrawable(this, R.drawable.sad_face);
+                stickerView.addSticker(new DrawableSticker(drawable));
+                break;
+            case SMILEYFACE:
+                drawable = ContextCompat.getDrawable(this, R.drawable.smiley);
+                stickerView.addSticker(new DrawableSticker(drawable));
+                break;
+        }
     }
 
     protected OnFailureListener onFailureListener() {

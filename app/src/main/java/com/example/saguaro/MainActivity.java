@@ -31,6 +31,7 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,7 +39,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private CaptureRequest mPreviewRequest;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int REQUEST_CAMERA_PERMISSION = 1;
-    FloatingActionButton boutonPicture;
+    private ImageView boutonPicture;
     private static final String PERMS = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int RC_IMAGE_PERMS = 100;
     private Uri uriImageSelected;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
         mTextureView = (TextureView) findViewById(R.id.textureView);
 
-        boutonPicture = findViewById(R.id.floatingActionButton);
+        boutonPicture = (ImageView) findViewById(R.id.cameraIconImageView);
         boutonPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

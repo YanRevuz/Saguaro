@@ -16,15 +16,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="25dp"
-        android:layout_height="34dp"
-        android:clickable="true"
+    <ImageView
+        android:id="@+id/cameraIconImageView"
+        android:layout_width="91dp"
+        android:layout_height="94dp"
         app:layout_constraintBottom_toBottomOf="@+id/textureView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textureView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.932"
-        app:srcCompat="@android:drawable/btn_radio" />
+        app:layout_constraintTop_toTopOf="@+id/textureView"
+        app:layout_constraintVertical_bias="0.935"
+        app:srcCompat="@drawable/camera_icon" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
