@@ -1,10 +1,5 @@
 package com.example.saguaro;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -37,14 +32,13 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.saguaro.Api.LocalisationHelper;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,7 +49,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -155,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     private void createCameraPreviewSession() {
@@ -242,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
             requestCameraPermission();
             return;
         }
+
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -377,7 +370,8 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MainActivity.this, "ERROR: Camera permissions not granted", Toast.LENGTH_LONG).show();
             }
-        }else {
+
+        } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
         }
@@ -534,13 +528,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(myContext, Filter.class);
                     intent.putExtra("MonImage", uriImageSelected.toString());
                     changeActivity(intent);
-
-
                 }
             });
         }
     };
-
 
     private void changeActivity(Intent i) {
         startActivity(i);

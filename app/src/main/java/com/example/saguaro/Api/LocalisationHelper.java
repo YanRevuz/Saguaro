@@ -13,22 +13,22 @@ public class LocalisationHelper {
 
     // --- COLLECTION REFERENCE ---
 
-    public static CollectionReference getLocalisationsCollection(){
+    public static CollectionReference getLocalisationsCollection() {
         System.out.println(FirebaseFirestore.getInstance().collection(COLLECTION_NAME));
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 
     // --- CREATE ---
 
-    public static Task<DocumentReference> createLocalisation(String urlPicture, double logitude, double latitude) {
-        Localisation LocalisationToCreate = new Localisation(urlPicture,logitude,latitude);
+    public static Task<DocumentReference> createLocalisation(String urlPicture, double longitude, double latitude) {
+        Localisation LocalisationToCreate = new Localisation(urlPicture, longitude, latitude);
         return LocalisationHelper.getLocalisationsCollection().add(LocalisationToCreate);
 
     }
 
     // --- GET ---
 
-    public static Task<DocumentSnapshot> getLocalisation(String uid){
+    public static Task<DocumentSnapshot> getLocalisation(String uid) {
         return LocalisationHelper.getLocalisationsCollection().document(uid).get();
     }
 

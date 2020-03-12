@@ -1,106 +1,85 @@
 package com.example.saguaro.Services;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
+import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
+import com.example.saguaro.MapsActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
-public class Position {
-
-    private String fournisseur;
-
-    private LocationManager locationManager;
+public class Position implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private Activity activity;
 
+    private GoogleApiClient mGoogleApiClient;
+    private static final String TAG = MapsActivity.class.getSimpleName();
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private LocationRequest mLocationRequest;
+
+    private Location currentLocation;
+
     public Position(Activity act) {
         this.activity = act;
+
+        mGoogleApiClient = new GoogleApiClient.Builder(activity.getApplicationContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        mGoogleApiClient.connect();
     }
 
-    private Criteria getCritere() {
-        Criteria critere = new Criteria();
-// Pour indiquer la précision voulue
-// On peut mettre ACCURACY_FINE pour une haute précision ou ACCURACY_COARSE pour une moins bonne précision
-        critere.setAccuracy(Criteria.ACCURACY_COARSE);
-// Est-ce que le fournisseur doit être capable de donner une altitude ?
-        critere.setAltitudeRequired(false);
-// Est-ce que le fournisseur doit être capable de donner une direction ?
-        critere.setBearingRequired(false);
-// Est-ce que le fournisseur peut être payant ?
-        critere.setCostAllowed(false);
-// Pour indiquer la consommation d'énergie demandée
-// Criteria.POWER_HIGH pour une haute consommation, Criteria.POWER_MEDIUM pour une consommation moyenne et Criteria.POWER_LOW pour une basse consommation
-        critere.setPowerRequirement(Criteria.POWER_MEDIUM);
-// Est-ce que le fournisseur doit être capable de donner une vitesse ?
-        critere.setSpeedRequired(false);
-        return critere;
+    public Location getLocation() {
+        return currentLocation;
     }
 
-//    private void requestLocationPermission() {
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-//            new AlertDialog.Builder(activity).setMessage("R string request permission").setPositiveButton(android.R.string.ok, (dialog, wich) -> {
-//                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, );
-//            }).setNegativeButton(android.R.string.cancel, (dialog,wich) -> {
-//                activity.finish(); }).create();
-//        }
-//    }
-
-    public Location getProvider() {
-        locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        Criteria critere = this.getCritere();
-        fournisseur = locationManager.getBestProvider(critere, true);
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-//           new AlertDialog.Builder(activity).setMessage("R string request permission").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//               @Override
-//               public void onClick(DialogInterface dialogInterface, int i) {
-//                   ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
-//               }
-//           });
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(activity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
         }
-        return locationManager.getLastKnownLocation(fournisseur);
     }
 
-    public String getFournisseur() {
-        return fournisseur;
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        } else {
+            handleNewLocation(location);
+        }
     }
 
-    public void setFournisseur(String fournisseur) {
-        this.fournisseur = fournisseur;
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, location.toString());
+        currentLocation = location;
     }
 
-    public LocationManager getLocationManager() {
-        return locationManager;
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Location services suspended. Please reconnect.");
     }
 
-    public void setLocationManager(LocationManager locationManager) {
-        this.locationManager = locationManager;
-    }
-
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
-    public double getLongitude() {
-       return this.getProvider().getLongitude();
-    }
-
-    public double getlatitude() {
-        return this.getProvider().getLatitude();
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation(location);
     }
 }
